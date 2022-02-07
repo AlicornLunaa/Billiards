@@ -16,7 +16,7 @@ class Body {
         this.pos = createVector(x, y); // The vector containing the position of the body
         this.vel = createVector(0, 0); // The vector containing the velocity
         this.acc = createVector(0, 0); // The vector containing acceleration forces
-        this.rotation = 0; // The float containing the rotation of the polygon
+        this.rotation = rotation; // The float containing the rotation of the polygon
         this.angVel = 0; // The float containing the rotational velocity
         this.mass = mass;
         this.id = -1; // ID to track within the physics world.
@@ -41,8 +41,8 @@ class Body {
         for(let c of this.colliders){
             // Offset the shape
             resetMatrix();
-            rotate(this.rotation);
             translate(this.pos.x, this.pos.y);
+            rotate(this.rotation);
 
             // Draw the collider
             c.render();

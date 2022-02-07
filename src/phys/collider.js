@@ -71,8 +71,8 @@ class CircleCollider extends Collider {
      * @param {float} y The Y offset of the collider with the parent
      * @param {float} radius The radius of the circle collider
      */
-     constructor(x, y, radius){
-        this.pos = createVector(x, y);
+    constructor(x, y, radius){
+        super(x, y, 0);
         this.radius = radius;
     }
 
