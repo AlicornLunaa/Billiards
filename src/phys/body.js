@@ -35,6 +35,33 @@ class Body {
     }
 
     /**
+     * Returns the transformed point of the collider based on the body's transform
+     * @param {*} collider ID for the collider to access 
+     * @param {*} point The ID of the point on the collider
+     * @returns {p5.Vector}
+     */
+    getPoint(collider, point){
+        // Get the local point
+        let localP = this.colliders[collider].getPoint(point);
+
+        // Transform the point in relation to the body
+        let c = cos(this.rotation);
+        let s = sin(this.rotation);
+
+        let transformed = createVector(
+            localP.x * c - localP.y * s,
+            localP.x * s + localP.y * c
+        );
+
+        // Fix origin
+        transformed.x += this.pos.x;
+        transformed.y += this.pos.y;
+
+        // Return the results
+        return transformed;
+    }
+
+    /**
      * Draw every collider attached as well as the center point
      */
     render(){

@@ -33,6 +33,35 @@ class Collider {
         this.vertices.splice(n, 1);
     }
 
+    /**
+     * Returns the tranformed point on the collider
+     * @param {integer} point 
+     * @returns {p5.Vector}
+     */
+    getPoint(point){
+        // Create settings
+        angleMode(DEGREES);
+
+        // Get the local point
+        let localP = this.vertices[point];
+
+        // Transform the point in relation to the body
+        let c = cos(this.rotation);
+        let s = sin(this.rotation);
+
+        let transformed = createVector(
+            localP.x * c - localP.y * s,
+            localP.x * s + localP.y * c
+        );
+
+        // Fix origin
+        transformed.x += this.pos.x;
+        transformed.y += this.pos.y;
+
+        // Return data
+        return transformed;
+    }
+
     // Gets the collider type based on the amount of vertices supplied
     getType(){
         switch(this.vertices.length){
