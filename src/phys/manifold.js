@@ -6,7 +6,15 @@
  * kind of collision.
  */
 class Manifold {
-    constructor(){
-        
+    /**
+     * Constructs a new manifold object
+     * @param {boolean} collides 
+     * @param {p5.Vector} normal 
+     * @param {float} intersection 
+     */
+    constructor(collides, normal, intersection){
+        this.collides = collides;
+        this.normal = normal;
+        this.intersection = intersection;
     }
 }

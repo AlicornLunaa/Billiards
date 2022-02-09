@@ -22,6 +22,8 @@ class Body {
         this.id = -1; // ID to track within the physics world.
 
         this.colliders = []; // An array containing colliders for the body to hit
+
+        this.collidedFunc = (otherBody) => {}; // Collision callback
     }
 
     /**
