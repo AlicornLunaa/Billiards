@@ -81,6 +81,7 @@ class Body {
 
             for(let colliderID2 = 0; colliderID2 < body.colliders.length; colliderID2++){
                 let c2 = body.colliders[colliderID2];
+                let collision = true;
 
                 // Loop through every edge of the collider
                 for(let i = 0; i < c1.vertices.length; i++){
@@ -111,13 +112,13 @@ class Body {
 
                     // Check for a separating axis
                     let overlap = max(max2, min2) - min(max1, min1);
-                    if(!(max2 >= min1 && max1 >= min2)){ break; }
-
-                    // Display the edges for debugging
-                    resetMatrix();
-                    circle(edge.x * min1, edge.y * min1, 5);
-                    circle(edge.x * max1, edge.y * max1, 5);
+                    if(!(max2 >= min1 && max1 >= min2)){
+                        collision = false;
+                        break;
+                    }
                 }
+                
+                if(collision){ manifold.collides = true; }
             }
         }
 

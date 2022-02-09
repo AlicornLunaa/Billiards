@@ -52,7 +52,7 @@ class World {
                 let manifold2 = b2.intersects(b1);
 
                 // Call the callback for the bodies
-                if(collided){
+                if(manifold1.collides && manifold2.collides){
                     b1.collidedFunc(b2);
                     b2.collidedFunc(b1);
                 }
