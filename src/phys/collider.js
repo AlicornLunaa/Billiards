@@ -62,19 +62,6 @@ class Collider {
         return transformed;
     }
 
-    /**
-     * Returns true or false if an object is intersecting with another object using separating axis thoerem
-     * @param {Collider} collider 
-     * @returns {boolean}
-     */
-    intersects(collider){
-        let manifold = new Manifold(false, createVector(0, 0), 0);
-
-        // !Implement SAT here
-
-        return manifold;
-    }
-
     // Gets the collider type based on the amount of vertices supplied
     getType(){
         switch(this.vertices.length){

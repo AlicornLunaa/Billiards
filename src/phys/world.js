@@ -46,18 +46,10 @@ class World {
                 let collided = false;
                 let b1 = this.bodies[i];
                 let b2 = this.bodies[k];
-
-                // With each body check each collider
-                for(let j = 0; j < b1.colliders.length; j++){
-                    for(let l = 0; l < b2.colliders.length; l++){
-                        let manifold = b1.colliders[j].intersects(b2.colliders[l]);
-                        
-                        if(manifold.collides){
-                            this.collisions.push(manifold);
-                            collided = true;
-                        }
-                    }
-                }
+                
+                // Check each body
+                let manifold1 = b1.intersects(b2);
+                let manifold2 = b2.intersects(b1);
 
                 // Call the callback for the bodies
                 if(collided){

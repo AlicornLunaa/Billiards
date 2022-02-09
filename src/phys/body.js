@@ -64,6 +64,67 @@ class Body {
     }
 
     /**
+     * Returns true or false if an object is intersecting with another object using separating axis thoerem
+     * @param {Body} body 
+     * @returns {Manifold}
+     */
+     intersects(body){
+        // Variables
+        let manifold = new Manifold(false, createVector(0, 0), 0);
+
+        let minimumOverlap = Infinity;
+        let minimumTranslation = createVector(0, 0);
+
+        // Check every collider against each other
+        for(let colliderID1 = 0; colliderID1 < this.colliders.length; colliderID1++){
+            let c1 = this.colliders[colliderID1];
+
+            for(let colliderID2 = 0; colliderID2 < body.colliders.length; colliderID2++){
+                let c2 = body.colliders[colliderID2];
+
+                // Loop through every edge of the collider
+                for(let i = 0; i < c1.vertices.length; i++){
+                    let start = this.getPoint(colliderID1, i);
+                    let end = this.getPoint(colliderID1, (i + 1) % c1.vertices.length);
+                    let edge = p5.Vector.sub(end, start);
+                    edge = createVector(edge.y, -edge.x);
+                    edge.normalize();
+
+                    let min1 = Infinity;
+                    let max1 = -Infinity;
+                    let min2 = Infinity;
+                    let max2 = -Infinity;
+                    
+                    // Loop through every vertex of this polygon and get its projection
+                    for(let k = 0; k < c1.vertices.length; k++){
+                        let proj = edge.dot(this.getPoint(colliderID1, k));
+                        min1 = min(proj, min1);
+                        max1 = max(proj, max1);
+                    }
+                    
+                    // Loop through every vertex of the other polygon and get its projection
+                    for(let k = 0; k < c2.vertices.length; k++){
+                        let proj = edge.dot(body.getPoint(colliderID2, k));
+                        min2 = min(proj, min2);
+                        max2 = max(proj, max2);
+                    }
+
+                    // Check for a separating axis
+                    let overlap = max(max2, min2) - min(max1, min1);
+                    if(!(max2 >= min1 && max1 >= min2)){ break; }
+
+                    // Display the edges for debugging
+                    resetMatrix();
+                    circle(edge.x * min1, edge.y * min1, 5);
+                    circle(edge.x * max1, edge.y * max1, 5);
+                }
+            }
+        }
+
+        return manifold;
+    }
+
+    /**
      * Draw every collider attached as well as the center point
      */
     render(){

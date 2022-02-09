@@ -2,6 +2,7 @@
 let physWorld;
 let testBody;
 let test2;
+let test3;
 
 // Initializer
 function setup(){
@@ -13,6 +14,14 @@ function setup(){
     test2.collidedFunc = (body) => {
         console.log("Hit");
     };
+
+    let c = new Collider(0, 0, 0);
+    c.addPoint(0, 20);
+    c.addPoint(-20, 10);
+    c.addPoint(20, 10);
+    test3 = new Body(70, 300, 21, 0);
+    test3.addCollider(c);
+    physWorld.registerBody(test3);
 }
 
 // Runtime
@@ -20,6 +29,8 @@ function draw(){
     background(220);
     testBody.render();
     test2.render();
+    test3.render();
+    
     test2.pos.x = mouseX;
     test2.pos.y = mouseY;
 
