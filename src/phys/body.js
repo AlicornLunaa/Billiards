@@ -127,10 +127,7 @@ class Body {
                 if(collision){
                     manifold.collides = true;
                     manifold.normal = minimumTranslation;
-                    manifold.overlap = minimumOverlap;
-
-                    resetMatrix();
-                    line(this.pos.x, this.pos.y, this.pos.x + manifold.normal * manifold.overlap, this.pos.y + manifold.normal * manifold.overlap);
+                    manifold.intersection = minimumOverlap;
                 }
             }
         }

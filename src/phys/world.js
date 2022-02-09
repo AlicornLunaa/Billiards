@@ -54,6 +54,8 @@ class World {
                 if(manifold1.collides && manifold2.collides){
                     b1.collidedFunc(b2);
                     b2.collidedFunc(b1);
+
+                    this.collisions.push(manifold1);
                 }
             }
         }
@@ -63,6 +65,12 @@ class World {
      * Responds to the manifolds and resets the manifold list to get ready for the next tick
      */
     collisionResolution(){
+        // Basic position solving
+        for(let manifold of this.collisions){
+            manifold.body1.pos.add(p5.Vector.mult(manifold.normal, manifold.intersection * 0.5));
+            manifold.body2.pos.add(p5.Vector.mult(manifold.normal, manifold.intersection * -0.5));
+        }
+
         this.collisions = [];
     }
 
