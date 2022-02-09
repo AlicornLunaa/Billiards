@@ -11,21 +11,13 @@ class Manifold {
      * @param {boolean} collides 
      * @param {p5.Vector} normal 
      * @param {float} intersection 
+     * @param {Body} body1
+     * @param {Body} body2
      */
-    constructor(collides, normal, intersection){
+    constructor(collides, normal, intersection, body1, body2){
         this.collides = collides;
         this.normal = normal;
         this.intersection = intersection;
-        this.body1 = null;
-        this.body2 = null;
-    }
-
-    /**
-     * Sets the bodies that the manifold is referencing.
-     * @param {Body} body1 
-     * @param {Body} body2 
-     */
-    setBodies(body1, body2){
         this.body1 = body1;
         this.body2 = body2;
     }

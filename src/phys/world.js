@@ -43,7 +43,6 @@ class World {
         for(let i = 0; i < this.bodies.length; i++){
             for(let k = i + 1; k < this.bodies.length; k++){
                 // References to bodies
-                let collided = false;
                 let b1 = this.bodies[i];
                 let b2 = this.bodies[k];
                 

@@ -70,7 +70,7 @@ class Body {
      */
      intersects(body){
         // Variables
-        let manifold = new Manifold(false, createVector(0, 0), 0);
+        let manifold = new Manifold(false, createVector(0, 0), 0, this, body);
 
         let minimumOverlap = Infinity;
         let minimumTranslation = createVector(0, 0);
@@ -116,9 +116,22 @@ class Body {
                         collision = false;
                         break;
                     }
+
+                    // Get minimum translatio vector
+                    if(overlap < minimumOverlap){
+                        minimumOverlap = overlap;
+                        minimumTranslation = edge;
+                    }
                 }
                 
-                if(collision){ manifold.collides = true; }
+                if(collision){
+                    manifold.collides = true;
+                    manifold.normal = minimumTranslation;
+                    manifold.overlap = minimumOverlap;
+
+                    resetMatrix();
+                    line(this.pos.x, this.pos.y, this.pos.x + manifold.normal * manifold.overlap, this.pos.y + manifold.normal * manifold.overlap);
+                }
             }
         }
 
