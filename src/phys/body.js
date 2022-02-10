@@ -20,7 +20,7 @@ class Body {
         this.angVel = 0; // The float containing the rotational velocity
         this.torque = 0;
         this.mass = mass;
-        this.elasticity = 50;
+        this.elasticity = 1;
         this.inertia = 100;
         this.id = -1; // ID to track within the physics world.
 
@@ -77,7 +77,7 @@ class Body {
 
         let minimumOverlap = Infinity;
         let minimumTranslation = createVector(0, 0);
-        let minimumContact = createVector(0, 0);
+        let maximumContact = createVector(0, 0);
 
         // Check every collider against each other
         for(let colliderID1 = 0; colliderID1 < this.colliders.length; colliderID1++){
@@ -121,19 +121,20 @@ class Body {
                         break;
                     }
 
-                    // Get minimum translatio vector
+                    // Get minimum translation vector
                     if(overlap < minimumOverlap){
                         minimumOverlap = overlap;
                         minimumTranslation = edge;
-                        minimumContact = start;
                     }
+                    
+                    //! Implement diagonal intersection algorithm to find the contact point
                 }
                 
                 if(collision){
                     manifold.collides = true;
                     manifold.normal = minimumTranslation;
                     manifold.intersection = minimumOverlap;
-                    manifold.contactPoint = minimumContact;
+                    manifold.contactPoint = maximumContact;
                 }
             }
         }
@@ -142,20 +143,27 @@ class Body {
     }
 
     /**
+     * Applies the current matrices for rendering
+     */
+    applyMatrices(){
+        resetMatrix();
+        translate(this.pos.x, this.pos.y);
+        angleMode(DEGREES);
+        rotate(this.rotation);
+    }
+
+    /**
      * Draw every collider attached as well as the center point
      */
     render(){
         for(let c of this.colliders){
             // Offset the shape
-            resetMatrix();
-            translate(this.pos.x, this.pos.y);
-            rotate(this.rotation);
+            this.applyMatrices();
 
             // Draw the collider
             c.render();
         }
     }
-
 }
 
 // Helper functions

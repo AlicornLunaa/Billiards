@@ -22,6 +22,6 @@ function draw(){
     background(220);
     testBody.render();
     test2.render();
-
+    
     physWorld.update(0);
 }
