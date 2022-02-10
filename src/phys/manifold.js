@@ -42,6 +42,8 @@ class Manifold {
         let numerator = this.normal.dot(p5.Vector.mult(relativeVelocity, -(1 + restitution)));
         let denomator = invMass1 + invMass2 + this.normal.dot(p5.Vector.add(angEnergy1, angEnergy2));
 
+        
+
         return numerator / denomator;
     }
 
@@ -53,9 +55,15 @@ class Manifold {
     impulseCorrection(){
         if(this.body1.vel.x == 0 && this.body1.vel.y == 0 && this.body2.vel.x == 0 && this.body2.vel.y == 0) return;
 
-        let impulse = this.getImpulseScale(); console.log(impulse);
+        let impulse = this.getImpulseScale();
+        let contact1 = p5.Vector.sub(this.contactPoint, this.body1.pos);
+        let contact2 = p5.Vector.sub(this.contactPoint, this.body2.pos);
+
         this.body1.vel.sub(p5.Vector.mult(this.normal, impulse / this.body1.mass));
         this.body2.vel.add(p5.Vector.mult(this.normal, impulse / this.body2.mass));
+        
+        this.body1.angVel += p5.Vector.mult(p5.Vector.mult(contact1, this.normal), impulse * (1 / this.body1.inertia)).y;
+        this.body2.angVel += p5.Vector.mult(p5.Vector.mult(contact2, this.normal), impulse * (1 / this.body2.inertia)).y;
     }
 
     /**

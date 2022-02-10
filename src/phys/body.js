@@ -18,9 +18,10 @@ class Body {
         this.acc = createVector(0, 0); // The vector containing acceleration forces
         this.rotation = rotation; // The float containing the rotation of the polygon
         this.angVel = 0; // The float containing the rotational velocity
+        this.torque = 0;
         this.mass = mass;
-        this.elasticity = 5000;
-        this.inertia = 1;
+        this.elasticity = 50;
+        this.inertia = 100;
         this.id = -1; // ID to track within the physics world.
 
         this.colliders = []; // An array containing colliders for the body to hit

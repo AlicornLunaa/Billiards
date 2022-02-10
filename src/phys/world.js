@@ -87,6 +87,10 @@ class World {
             body.vel.add(body.acc);
             body.pos.add(body.vel);
             body.acc.mult(0);
+
+            body.angVel += body.torque;
+            body.rotation += body.angVel;
+            body.torque = 0;
         }
     }
 
