@@ -55,7 +55,12 @@ class World {
                     b1.collidedFunc(b2);
                     b2.collidedFunc(b1);
 
-                    this.collisions.push(manifold1);
+                    // Add manifold with smaller minimum translation vector
+                    if(manifold1.intersection < manifold2.intersection){
+                        this.collisions.push(manifold1);
+                    } else {
+                        this.collisions.push(manifold2);
+                    }
                 }
             }
         }
@@ -65,10 +70,15 @@ class World {
      * Responds to the manifolds and resets the manifold list to get ready for the next tick
      */
     collisionResolution(){
-        // Basic position solving
+        // Resolve the collision
         for(let manifold of this.collisions){
+            // Positional correction
             manifold.body1.pos.add(p5.Vector.mult(manifold.normal, manifold.intersection * 0.5));
             manifold.body2.pos.add(p5.Vector.mult(manifold.normal, manifold.intersection * -0.5));
+
+            // Velocity correction
+            let restitution = min(manifold.body1.elasticity, manifold.body2.elasticity);
+            
         }
 
         this.collisions = [];
@@ -78,7 +88,12 @@ class World {
      * Updates the body's position and velocities with each tick
      */
     dynamicsResponse(){
-
+        // Solve for dynamics
+        for(let body of this.bodies){
+            body.vel.add(body.acc);
+            body.pos.add(body.vel);
+            body.acc.mult(0);
+        }
     }
 
     /**

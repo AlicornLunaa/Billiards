@@ -19,6 +19,7 @@ class Body {
         this.rotation = rotation; // The float containing the rotation of the polygon
         this.angVel = 0; // The float containing the rotational velocity
         this.mass = mass;
+        this.elasticity = 1;
         this.id = -1; // ID to track within the physics world.
 
         this.colliders = []; // An array containing colliders for the body to hit
