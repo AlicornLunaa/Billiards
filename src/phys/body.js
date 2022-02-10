@@ -21,7 +21,7 @@ class Body {
         this.torque = 0;
         this.mass = mass;
         this.elasticity = 1;
-        this.inertia = 100;
+        this.inertia = 1000;
         this.id = -1; // ID to track within the physics world.
 
         this.colliders = []; // An array containing colliders for the body to hit
@@ -77,6 +77,7 @@ class Body {
 
         let minimumOverlap = Infinity;
         let minimumTranslation = createVector(0, 0);
+        let maximumOverlap = -Infinity;
         let maximumContact = createVector(0, 0);
 
         // Check every collider against each other
@@ -109,9 +110,16 @@ class Body {
                     
                     // Loop through every vertex of the other polygon and get its projection
                     for(let k = 0; k < c2.vertices.length; k++){
-                        let proj = edge.dot(body.getPoint(colliderID2, k));
+                        let v = body.getPoint(colliderID2, k);
+                        let proj = edge.dot(v);
                         min2 = min(proj, min2);
                         max2 = max(proj, max2);
+                        
+                        let overlap = Utility.lineIntersection(p5.Vector.sub(end, start), p5.Vector.sub(v, body.pos));
+                        if(overlap > maximumOverlap){
+                            maximumOverlap = overlap;
+                            maximumContact = v;
+                        }
                     }
 
                     // Check for a separating axis
@@ -126,8 +134,6 @@ class Body {
                         minimumOverlap = overlap;
                         minimumTranslation = edge;
                     }
-                    
-                    //! Implement diagonal intersection algorithm to find the contact point
                 }
                 
                 if(collision){

@@ -31,6 +31,10 @@ class Manifold {
 
         let contact1 = p5.Vector.sub(this.contactPoint, this.body1.pos);
         let contact2 = p5.Vector.sub(this.contactPoint, this.body2.pos);
+        
+        //! Debug
+        lline(this.body1.pos.x, this.body1.pos.y, contact1.x, contact1.y);
+        lline(this.body2.pos.x, this.body2.pos.y, contact2.x, contact2.y);
 
         let invMass1 = 1 / this.body1.mass;
         let invInert1 = 1 / this.body1.inertia;
@@ -42,7 +46,7 @@ class Manifold {
 
         // Impulse resolution equation
         let numerator = this.normal.dot(p5.Vector.mult(relativeVelocity, -(1 + restitution)));
-        let denomator = invMass1 + invMass2;//! + this.normal.dot(p5.Vector.add(angEnergy1, angEnergy2));
+        let denomator = invMass1 + invMass2 + this.normal.dot(p5.Vector.add(angEnergy1, angEnergy2));
 
         return numerator / denomator;
     }
@@ -62,9 +66,8 @@ class Manifold {
         this.body1.vel.sub(p5.Vector.mult(this.normal, impulse / this.body1.mass));
         this.body2.vel.add(p5.Vector.mult(this.normal, impulse / this.body2.mass));
         
-        //! Uncomment after implmenting contact point algorithm
-        // this.body1.angVel += p5.Vector.mult(p5.Vector.mult(contact1, this.normal), impulse * (1 / this.body1.inertia)).y;
-        // this.body2.angVel += p5.Vector.mult(p5.Vector.mult(contact2, this.normal), impulse * (1 / this.body2.inertia)).y;
+        this.body1.angVel += p5.Vector.mult(p5.Vector.mult(contact1, this.normal), impulse * (1 / this.body1.inertia)).y;
+        this.body2.angVel += p5.Vector.mult(p5.Vector.mult(contact2, this.normal), impulse * (1 / this.body2.inertia)).y;
     }
 
     /**
@@ -75,7 +78,7 @@ class Manifold {
 
         //! Debug
         resetMatrix();
-        lline(this.contactPoint.x, this.contactPoint.y, this.normal.x * 50, this.normal.y * 50);
+        // lline(this.contactPoint.x, this.contactPoint.y, this.normal.x * 50, this.normal.y * 50);
         
         this.positionCorrection();
         this.impulseCorrection();

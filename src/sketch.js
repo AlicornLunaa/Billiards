@@ -14,7 +14,6 @@ function setup(){
     test2.collidedFunc = (body) => {
         console.log("Hit");
     };
-    test2.vel.y = -1;
 }
 
 // Runtime
@@ -23,5 +22,10 @@ function draw(){
     testBody.render();
     test2.render();
     
+    testBody.vel.x = (mouseX - testBody.pos.x) * 0.01;
+    testBody.vel.y = (mouseY - testBody.pos.y) * 0.01;
+    test2.vel.x = (mouseX - test2.pos.x) * 0.01;
+    test2.vel.y = (mouseY - test2.pos.y) * 0.01;
+
     physWorld.update(0);
 }
