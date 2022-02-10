@@ -9,8 +9,8 @@ function setup(){
     createCanvas(400, 400);
 
     physWorld = new World();
-    testBody = physWorld.registerBody(bodyTypes.createBoxBody(200, 100, 50, 70, 45, 1));
-    test2 = physWorld.registerBody(bodyTypes.createBoxBody(200, 350, 100, 10, 0, 10));
+    testBody = physWorld.registerBody(bodyTypes.createBoxBody(200, 100, 50, 70, 45, 100));
+    test2 = physWorld.registerBody(bodyTypes.createBoxBody(200, 350, 100, 10, 0, 1));
     test2.collidedFunc = (body) => {
         console.log("Hit");
     };

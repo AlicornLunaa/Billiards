@@ -72,13 +72,7 @@ class World {
     collisionResolution(){
         // Resolve the collision
         for(let manifold of this.collisions){
-            // Positional correction
-            manifold.body1.pos.add(p5.Vector.mult(manifold.normal, manifold.intersection * 0.5));
-            manifold.body2.pos.add(p5.Vector.mult(manifold.normal, manifold.intersection * -0.5));
-
-            // Velocity correction
-            let restitution = min(manifold.body1.elasticity, manifold.body2.elasticity);
-            
+            manifold.solve();
         }
 
         this.collisions = [];

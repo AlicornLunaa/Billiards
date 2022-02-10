@@ -14,11 +14,57 @@ class Manifold {
      * @param {Body} body1
      * @param {Body} body2
      */
-    constructor(collides, normal, intersection, body1, body2){
+    constructor(collides, normal, intersection, contactPoint, body1, body2){
         this.collides = collides;
         this.normal = normal;
         this.intersection = intersection;
+        this.contactPoint = contactPoint;
         this.body1 = body1;
         this.body2 = body2;
+    }
+
+    getImpulseScale(){
+        let relativeVelocity = p5.Vector.sub(this.body2.vel, this.body1.vel);
+        let restitution = min(this.body1.elasticity, this.body2.elasticity);
+
+        let contact1 = p5.Vector.sub(this.contactPoint, this.body1.pos);
+        let contact2 = p5.Vector.sub(this.contactPoint, this.body2.pos);
+
+        let invMass1 = 1 / this.body1.mass;
+        let invInert1 = 1 / this.body1.inertia;
+        let invMass2 = 1 / this.body2.mass;
+        let invInert2 = 1 / this.body2.inertia;
+
+        let angEnergy1 = p5.Vector.mult(p5.Vector.mult(p5.Vector.mult(contact1, this.normal), invInert1), contact1);
+        let angEnergy2 = p5.Vector.mult(p5.Vector.mult(p5.Vector.mult(contact2, this.normal), invInert2), contact2);
+
+        // Impulse resolution equation
+        let numerator = this.normal.dot(p5.Vector.mult(relativeVelocity, -(1 + restitution)));
+        let denomator = invMass1 + invMass2 + this.normal.dot(p5.Vector.add(angEnergy1, angEnergy2));
+
+        return numerator / denomator;
+    }
+
+    positionCorrection(){
+        this.body1.pos.add(p5.Vector.mult(this.normal, this.intersection * 0.5));
+        this.body2.pos.add(p5.Vector.mult(this.normal, this.intersection * -0.5));
+    }
+
+    impulseCorrection(){
+        if(this.body1.vel.x == 0 && this.body1.vel.y == 0 && this.body2.vel.x == 0 && this.body2.vel.y == 0) return;
+
+        let impulse = this.getImpulseScale(); console.log(impulse);
+        this.body1.vel.sub(p5.Vector.mult(this.normal, impulse / this.body1.mass));
+        this.body2.vel.add(p5.Vector.mult(this.normal, impulse / this.body2.mass));
+    }
+
+    /**
+     * Takes the collision and adjusts the position and velocity to match
+     */
+    solve(){
+        if(this.normal.x == 0 && this.normal.y == 0) return;
+        
+        this.positionCorrection();
+        this.impulseCorrection();
     }
 }

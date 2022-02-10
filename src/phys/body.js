@@ -19,7 +19,8 @@ class Body {
         this.rotation = rotation; // The float containing the rotation of the polygon
         this.angVel = 0; // The float containing the rotational velocity
         this.mass = mass;
-        this.elasticity = 1;
+        this.elasticity = 5000;
+        this.inertia = 1;
         this.id = -1; // ID to track within the physics world.
 
         this.colliders = []; // An array containing colliders for the body to hit
@@ -71,10 +72,11 @@ class Body {
      */
      intersects(body){
         // Variables
-        let manifold = new Manifold(false, createVector(0, 0), 0, this, body);
+        let manifold = new Manifold(false, createVector(0, 0), 0, createVector(0, 0), this, body);
 
         let minimumOverlap = Infinity;
         let minimumTranslation = createVector(0, 0);
+        let minimumContact = createVector(0, 0);
 
         // Check every collider against each other
         for(let colliderID1 = 0; colliderID1 < this.colliders.length; colliderID1++){
@@ -122,6 +124,7 @@ class Body {
                     if(overlap < minimumOverlap){
                         minimumOverlap = overlap;
                         minimumTranslation = edge;
+                        minimumContact = start;
                     }
                 }
                 
@@ -129,6 +132,7 @@ class Body {
                     manifold.collides = true;
                     manifold.normal = minimumTranslation;
                     manifold.intersection = minimumOverlap;
+                    manifold.contactPoint = minimumContact;
                 }
             }
         }
