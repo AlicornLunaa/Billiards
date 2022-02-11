@@ -115,10 +115,10 @@ class Body {
                         min2 = min(proj, min2);
                         max2 = max(proj, max2);
                         
-                        let overlap = Utility.lineIntersection(p5.Vector.sub(end, start), p5.Vector.sub(v, body.pos));
-                        if(overlap > maximumOverlap){
-                            maximumOverlap = overlap;
-                            maximumContact = v;
+                        let intersection = Utility.lineIntersection(start, end, body.pos, v);
+                        if(intersection.overlap > maximumOverlap){
+                            maximumOverlap = intersection.overlap;
+                            maximumContact = createVector(intersection.x, intersection.y);
                         }
                     }
 

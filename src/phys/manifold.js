@@ -34,6 +34,7 @@ class Manifold {
         
         //! Debug
         lline(this.body1.pos.x, this.body1.pos.y, contact1.x, contact1.y);
+        circle(this.body1.pos.x, this.body1.pos.y, 10);
         lline(this.body2.pos.x, this.body2.pos.y, contact2.x, contact2.y);
 
         let invMass1 = 1 / this.body1.mass;
@@ -66,7 +67,8 @@ class Manifold {
         this.body1.vel.sub(p5.Vector.mult(this.normal, impulse / this.body1.mass));
         this.body2.vel.add(p5.Vector.mult(this.normal, impulse / this.body2.mass));
         
-        this.body1.angVel += p5.Vector.mult(p5.Vector.mult(contact1, this.normal), impulse * (1 / this.body1.inertia)).y;
+        //! Convert this to a perpendicular cross product instead of regular multiplication
+        this.body1.angVel -= p5.Vector.mult(p5.Vector.mult(contact1, this.normal), impulse * (1 / this.body1.inertia)).y;
         this.body2.angVel += p5.Vector.mult(p5.Vector.mult(contact2, this.normal), impulse * (1 / this.body2.inertia)).y;
     }
 
@@ -78,7 +80,7 @@ class Manifold {
 
         //! Debug
         resetMatrix();
-        // lline(this.contactPoint.x, this.contactPoint.y, this.normal.x * 50, this.normal.y * 50);
+        lline(this.contactPoint.x, this.contactPoint.y, this.normal.x * 50, this.normal.y * 50);
         
         this.positionCorrection();
         this.impulseCorrection();
