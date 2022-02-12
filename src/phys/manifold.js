@@ -31,19 +31,14 @@ class Manifold {
 
         let contact1 = p5.Vector.sub(this.contactPoint, this.body1.pos);
         let contact2 = p5.Vector.sub(this.contactPoint, this.body2.pos);
-        
-        //! Debug
-        lline(this.body1.pos.x, this.body1.pos.y, contact1.x, contact1.y);
-        circle(this.body1.pos.x, this.body1.pos.y, 10);
-        lline(this.body2.pos.x, this.body2.pos.y, contact2.x, contact2.y);
 
         let invMass1 = 1 / this.body1.mass;
         let invInert1 = 1 / this.body1.inertia;
         let invMass2 = 1 / this.body2.mass;
         let invInert2 = 1 / this.body2.inertia;
 
-        let angEnergy1 = p5.Vector.mult(p5.Vector.mult(p5.Vector.mult(contact1, this.normal), invInert1), contact1);
-        let angEnergy2 = p5.Vector.mult(p5.Vector.mult(p5.Vector.mult(contact2, this.normal), invInert2), contact2);
+        let angEnergy1 = p5.Vector.mult(contact1.cross(this.normal), invInert1).cross(contact1);
+        let angEnergy2 = p5.Vector.mult(contact2.cross(this.normal), invInert2).cross(contact2);
 
         // Impulse resolution equation
         let numerator = this.normal.dot(p5.Vector.mult(relativeVelocity, -(1 + restitution)));
@@ -53,8 +48,8 @@ class Manifold {
     }
 
     positionCorrection(){
-        this.body1.pos.add(p5.Vector.mult(this.normal, this.intersection * 0.5));
-        this.body2.pos.add(p5.Vector.mult(this.normal, this.intersection * -0.5));
+        if(!this.body1.static) this.body1.pos.add(p5.Vector.mult(this.normal, this.intersection * 0.5));
+        if(!this.body2.static) this.body2.pos.add(p5.Vector.mult(this.normal, this.intersection * -0.5));
     }
 
     impulseCorrection(){
@@ -63,13 +58,16 @@ class Manifold {
         let impulse = this.getImpulseScale();
         let contact1 = p5.Vector.sub(this.contactPoint, this.body1.pos);
         let contact2 = p5.Vector.sub(this.contactPoint, this.body2.pos);
-
-        this.body1.vel.sub(p5.Vector.mult(this.normal, impulse / this.body1.mass));
-        this.body2.vel.add(p5.Vector.mult(this.normal, impulse / this.body2.mass));
         
-        //! Convert this to a perpendicular cross product instead of regular multiplication
-        this.body1.angVel -= p5.Vector.mult(p5.Vector.mult(contact1, this.normal), impulse * (1 / this.body1.inertia)).y;
-        this.body2.angVel += p5.Vector.mult(p5.Vector.mult(contact2, this.normal), impulse * (1 / this.body2.inertia)).y;
+        if(!this.body1.static){
+            this.body1.vel.sub(p5.Vector.mult(this.normal, impulse / this.body1.mass));
+            this.body1.angVel -= impulse * (1 / this.body1.inertia) * contact1.cross(this.normal).z;
+        }
+
+        if(!this.body2.static){
+            this.body2.vel.add(p5.Vector.mult(this.normal, impulse / this.body2.mass));
+            this.body2.angVel += impulse * (1 / this.body2.inertia) * contact2.cross(this.normal).z;
+        }
     }
 
     /**
@@ -77,10 +75,6 @@ class Manifold {
      */
     solve(){
         if(this.normal.x == 0 && this.normal.y == 0) return;
-
-        //! Debug
-        resetMatrix();
-        lline(this.contactPoint.x, this.contactPoint.y, this.normal.x * 50, this.normal.y * 50);
         
         this.positionCorrection();
         this.impulseCorrection();

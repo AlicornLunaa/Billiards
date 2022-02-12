@@ -20,8 +20,9 @@ class Body {
         this.angVel = 0; // The float containing the rotational velocity
         this.torque = 0;
         this.mass = mass;
-        this.elasticity = 1;
+        this.elasticity = 10;
         this.inertia = 1000;
+        this.static = false; // Controls whether or not the object can be moved with collisions
         this.id = -1; // ID to track within the physics world.
 
         this.colliders = []; // An array containing colliders for the body to hit
