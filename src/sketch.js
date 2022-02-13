@@ -9,7 +9,7 @@ function setup(){
 
     physWorld = new World();
 
-    testBody = physWorld.registerBody(bodyTypes.createBoxBody(200, 100, 50, 70, 45, 100));
+    testBody = physWorld.registerBody(bodyTypes.createBoxBody(200, 100, 50, 50, 43, 100));
 
     floor = physWorld.registerBody(bodyTypes.createBoxBody(200, 375, 390, 10, 0, 10));
     floor.static = true;

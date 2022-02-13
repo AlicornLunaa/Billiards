@@ -23,6 +23,7 @@ class Body {
         this.elasticity = 10;
         this.inertia = 1000;
         this.static = false; // Controls whether or not the object can be moved with collisions
+        this.isTrigger = false; // Whether or not the object is solid, useful for triggers
         this.id = -1; // ID to track within the physics world.
 
         this.colliders = []; // An array containing colliders for the body to hit
@@ -103,23 +104,43 @@ class Body {
                     let max2 = -Infinity;
                     
                     // Loop through every vertex of this polygon and get its projection
-                    for(let k = 0; k < c1.vertices.length; k++){
-                        let proj = edge.dot(this.getPoint(colliderID1, k));
-                        min1 = min(proj, min1);
-                        max1 = max(proj, max1);
+                    if(c1 instanceof CircleCollider){
+                        // Circle collisions
+                        let center = this.pos;
+                        let proj = edge.dot(center);
+                        min2 = min(proj - c1.radius, min2);
+                        max2 = max(proj + c1.radius, max2);
+                    } else {
+                        // Polygon collisions
+                        for(let k = 0; k < c1.vertices.length; k++){
+                            let proj = edge.dot(this.getPoint(colliderID1, k));
+                            min1 = min(proj, min1);
+                            max1 = max(proj, max1);
+                        }
                     }
                     
                     // Loop through every vertex of the other polygon and get its projection
-                    for(let k = 0; k < c2.vertices.length; k++){
-                        let v = body.getPoint(colliderID2, k);
-                        let proj = edge.dot(v);
-                        min2 = min(proj, min2);
-                        max2 = max(proj, max2);
+                    if(c2 instanceof CircleCollider){
+                        // Circle collisions
+                        let center = body.pos;
+                        let proj = edge.dot(center);
+                        min2 = min(proj - c2.radius, min2);
+                        max2 = max(proj + c2.radius, max2);
                         
-                        let intersection = Utility.lineIntersection(start, end, body.pos, v);
-                        if(intersection.overlap > maximumOverlap){
-                            maximumOverlap = intersection.overlap;
-                            maximumContact = createVector(intersection.x, intersection.y);
+                        maximumContact = p5.Vector.mult(p5.Vector.add(this.pos, body.pos), 0.5);
+                    } else {
+                        // Polygon collisions
+                        for(let k = 0; k < c2.vertices.length; k++){
+                            let v = body.getPoint(colliderID2, k);
+                            let proj = edge.dot(v);
+                            min2 = min(proj, min2);
+                            max2 = max(proj, max2);
+                            
+                            let intersection = Utility.lineIntersection(start, end, body.pos, v);
+                            if(intersection.overlap > maximumOverlap){
+                                maximumOverlap = intersection.overlap;
+                                maximumContact = createVector(intersection.x, intersection.y);
+                            }
                         }
                     }
 
