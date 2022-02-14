@@ -53,8 +53,6 @@ class Manifold {
     }
 
     impulseCorrection(){
-        if(this.body1.vel.x == 0 && this.body1.vel.y == 0 && this.body2.vel.x == 0 && this.body2.vel.y == 0) return;
-
         let impulse = this.getImpulseScale();
         let contact1 = p5.Vector.sub(this.contactPoint, this.body1.pos);
         let contact2 = p5.Vector.sub(this.contactPoint, this.body2.pos);

@@ -89,6 +89,22 @@ class Body {
             for(let colliderID2 = 0; colliderID2 < body.colliders.length; colliderID2++){
                 let c2 = body.colliders[colliderID2];
                 let collision = true;
+                
+                // Circle to circle collisions
+                if(c1 instanceof CircleCollider && c2 instanceof CircleCollider){
+                    // Get distance
+                    let relative = p5.Vector.sub(body.getPoint(colliderID2, 0), this.getPoint(colliderID1, 0));
+                    let distance = relative.magSq();
+                    
+                    if(distance < (c1.radius + c2.radius) * (c1.radius + c2.radius)){
+                        manifold.collides = true;
+                        manifold.normal = p5.Vector.mult(p5.Vector.normalize(relative), -1);
+                        manifold.intersection = c1.radius + c2.radius - sqrt(distance);
+                        manifold.contactPoint = p5.Vector.mult(p5.Vector.add(body.getPoint(colliderID2, 0), this.getPoint(colliderID1, 0)), 0.5);
+                    }
+
+                    return manifold;
+                }
 
                 // Loop through every edge of the collider
                 for(let i = 0; i < c1.vertices.length; i++){
@@ -105,11 +121,10 @@ class Body {
                     
                     // Loop through every vertex of this polygon and get its projection
                     if(c1 instanceof CircleCollider){
-                        // Circle collisions
-                        let center = this.pos;
-                        let proj = edge.dot(center);
-                        min2 = min(proj - c1.radius, min2);
-                        max2 = max(proj + c1.radius, max2);
+                        // Circle collision on C1 are always true
+                        manifold.collides = true;
+                        manifold.intersection = Infinity; // Cause the other collider to be checked
+                        return manifold;
                     } else {
                         // Polygon collisions
                         for(let k = 0; k < c1.vertices.length; k++){
@@ -122,12 +137,16 @@ class Body {
                     // Loop through every vertex of the other polygon and get its projection
                     if(c2 instanceof CircleCollider){
                         // Circle collisions
-                        let center = body.pos;
+                        let center = body.getPoint(colliderID2, 0);
                         let proj = edge.dot(center);
                         min2 = min(proj - c2.radius, min2);
                         max2 = max(proj + c2.radius, max2);
-                        
-                        maximumContact = p5.Vector.mult(p5.Vector.add(this.pos, body.pos), 0.5);
+
+                        let intersection = this.getPoint(colliderID1, 0).dist(body.getPoint(colliderID2, 0));
+                        if(intersection > maximumOverlap){
+                            maximumOverlap = intersection;
+                            maximumContact = p5.Vector.mult(p5.Vector.add(body.getPoint(colliderID2, 0), this.getPoint(colliderID1, 0)), 0.5);
+                        }
                     } else {
                         // Polygon collisions
                         for(let k = 0; k < c2.vertices.length; k++){
@@ -199,6 +218,12 @@ let bodyTypes = {
     createBoxBody(x, y, width, height, rotation, mass){
         let b = new Body(x, y, rotation, mass);
         b.addCollider(colliderTypes.createBoxCollider(0, 0, width, height, 0));
+
+        return b;
+    },
+    createCircleBody(x, y, radius, mass){
+        let b = new Body(x, y, 0, mass);
+        b.addCollider(colliderTypes.createCircleCollider(0, 0, radius));
 
         return b;
     }

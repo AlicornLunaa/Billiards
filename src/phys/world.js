@@ -61,6 +61,7 @@ class World {
                     } else {
                         this.collisions.push(manifold2);
                     }
+                    console.log(this.collisions[this.collisions.length - 1].body2.vel.y);
                 }
             }
         }
@@ -81,15 +82,15 @@ class World {
     /**
      * Updates the body's position and velocities with each tick
      */
-    dynamicsResponse(){
+    dynamicsResponse(dt){
         // Solve for dynamics
         for(let body of this.bodies){
-            body.vel.add(body.acc);
-            body.pos.add(body.vel);
+            body.vel.add(p5.Vector.mult(body.acc, dt));
+            body.pos.add(p5.Vector.mult(body.vel, dt));
             body.acc.mult(0);
 
-            body.angVel += body.torque;
-            body.rotation += body.angVel;
+            body.angVel += body.torque * dt;
+            body.rotation += body.angVel * dt;
             body.torque = 0;
         }
     }
@@ -101,6 +102,6 @@ class World {
     update(deltaTime){
         this.collisionDetection();
         this.collisionResolution();
-        this.dynamicsResponse();
+        this.dynamicsResponse(deltaTime);
     }
 }

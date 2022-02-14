@@ -103,6 +103,7 @@ class CircleCollider extends Collider {
     constructor(x, y, radius){
         super(x, y, 0);
         this.radius = radius;
+        this.addPoint(0, 0);
     }
 
     // Gets the collider type based on the amount of vertices supplied
@@ -113,7 +114,7 @@ class CircleCollider extends Collider {
      */
     render(){
         translate(this.pos.x, this.pos.y);
-        circle(0, 0, 3);
+        circle(0, 0, 1);
         circle(0, 0, this.radius * 2);
     }
 };
@@ -130,6 +131,10 @@ let colliderTypes = {
         c.addPoint(halfWidth, halfHeight);
         c.addPoint(-halfWidth, halfHeight);
 
+        return c;
+    },
+    createCircleCollider(x, y, radius){
+        let c = new CircleCollider(x, y, radius);
         return c;
     }
 };
