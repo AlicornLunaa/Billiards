@@ -47,20 +47,24 @@ class World {
                 let b2 = this.bodies[k];
                 
                 // Check each body
-                let manifold1 = b1.intersects(b2);
-                let manifold2 = b2.intersects(b1);
+                let manifolds1 = b1.intersects(b2);
+                let manifolds2 = b2.intersects(b1);
 
                 // Call the callback for the bodies
-                if(manifold1.collides && manifold2.collides){
+                if(manifolds1.length > 0 && manifolds2.length > 0){
                     b1.collidedFunc(b2);
                     b2.collidedFunc(b1);
 
+                    this.collisions = this.collisions.concat(manifolds1);
+                    this.collisions = this.collisions.concat(manifolds2);
                     // Add manifold with smaller minimum translation vector
-                    if(manifold1.intersection < manifold2.intersection){
-                        this.collisions.push(manifold1);
-                    } else {
-                        this.collisions.push(manifold2);
-                    }
+                    // for(let manifold1 of manifolds1) for(let manifold2 of manifolds2){
+                    //     if(manifold1.intersection < manifold2.intersection){
+                    //         this.collisions.push(manifold1);
+                    //     } else {
+                    //         this.collisions.push(manifold2);
+                    //     }
+                    // }
                 }
             }
         }

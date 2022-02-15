@@ -75,7 +75,7 @@ class Body {
      */
     intersects(body){
         // Variables
-        let manifold = new Manifold(false, createVector(0, 0), 0, createVector(0, 0), this, body);
+        let manifolds = [];
 
         let minimumOverlap = Infinity;
         let minimumTranslation = createVector(0, 0);
@@ -95,6 +95,7 @@ class Body {
                     // Get distance
                     let relative = p5.Vector.sub(body.getPoint(colliderID2, 0), this.getPoint(colliderID1, 0));
                     let distance = relative.magSq();
+                    let manifold = new Manifold(false, createVector(0, 0), 0, createVector(0, 0), this, body);
                     
                     if(distance < (c1.radius + c2.radius) * (c1.radius + c2.radius)){
                         manifold.collides = true;
@@ -103,7 +104,7 @@ class Body {
                         manifold.contactPoint = p5.Vector.mult(p5.Vector.add(body.getPoint(colliderID2, 0), this.getPoint(colliderID1, 0)), 0.5);
                     }
 
-                    return manifold;
+                    return [manifold];
                 }
 
                 // Loop through every edge of the collider
@@ -122,9 +123,7 @@ class Body {
                     // Loop through every vertex of this polygon and get its projection
                     if(c1 instanceof CircleCollider){
                         // Circle collision on C1 are always true
-                        manifold.collides = true;
-                        manifold.intersection = Infinity; // Cause the other collider to be checked
-                        return manifold;
+                        return [new Manifold(true, createVector(0, 0), Infinity, createVector(0, 0), this, body)];
                     } else {
                         // Polygon collisions
                         for(let k = 0; k < c1.vertices.length; k++){
@@ -177,15 +176,12 @@ class Body {
                 }
                 
                 if(collision){
-                    manifold.collides = true;
-                    manifold.normal = minimumTranslation;
-                    manifold.intersection = minimumOverlap;
-                    manifold.contactPoint = maximumContact;
+                    manifolds.push(new Manifold(true, minimumTranslation, minimumOverlap, maximumContact, this, body));
                 }
             }
         }
 
-        return manifold;
+        return manifolds;
     }
 
     /**
