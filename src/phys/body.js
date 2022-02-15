@@ -141,12 +141,6 @@ class Body {
                         let proj = edge.dot(center);
                         min2 = min(proj - c2.radius, min2);
                         max2 = max(proj + c2.radius, max2);
-
-                        let intersection = this.getPoint(colliderID1, 0).dist(body.getPoint(colliderID2, 0));
-                        if(intersection > maximumOverlap){
-                            maximumOverlap = intersection;
-                            maximumContact = p5.Vector.mult(p5.Vector.add(body.getPoint(colliderID2, 0), this.getPoint(colliderID1, 0)), 0.5);
-                        }
                     } else {
                         // Polygon collisions
                         for(let k = 0; k < c2.vertices.length; k++){
@@ -174,6 +168,11 @@ class Body {
                     if(overlap < minimumOverlap){
                         minimumOverlap = overlap;
                         minimumTranslation = edge;
+
+                        if(c2 instanceof CircleCollider){
+                            maximumOverlap = overlap;
+                            maximumContact = p5.Vector.mult(p5.Vector.add(body.getPoint(colliderID2, 0), this.getPoint(colliderID1, 0)), 0.5);
+                        }
                     }
                 }
                 

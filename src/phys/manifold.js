@@ -42,7 +42,7 @@ class Manifold {
 
         // Impulse resolution equation
         let numerator = this.normal.dot(p5.Vector.mult(relativeVelocity, -(1 + restitution)));
-        let denomator = invMass1 + invMass2 + this.normal.dot(p5.Vector.add(angEnergy1, angEnergy2));
+        let denomator = (invMass1 + invMass2) * 4 /*+ this.normal.dot(p5.Vector.add(angEnergy1, angEnergy2))*/;
 
         return numerator / denomator;
     }

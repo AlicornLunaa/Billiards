@@ -61,7 +61,6 @@ class World {
                     } else {
                         this.collisions.push(manifold2);
                     }
-                    console.log(this.collisions[this.collisions.length - 1].body2.vel.y);
                 }
             }
         }
