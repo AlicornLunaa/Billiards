@@ -1,6 +1,6 @@
 // Variables
-let physWorld;
-let testBody;
+let physics;
+let world;
 let floor;
 let circles = [];
 
@@ -8,23 +8,29 @@ let circles = [];
 function setup(){
     createCanvas(400, 400);
 
-    physWorld = new World();
+    physics = new World();
 
-    floor = physWorld.registerBody(bodyTypes.createBoxBody(200, 375, 390, 10, 0, 10));
-    floor.static = true;
-    floor.collidedFunc = (body) => {};
+    world = physics.registerBody(bodyTypes.createWorldBody(width / 2, height / 2, 150, 150, 0));
 
-    circles.push(physWorld.registerBody(bodyTypes.createCircleBody(110, 10, 30, 10)));
+    // floor = physics.registerBody(bodyTypes.createBoxBody(200, 375, 390, 10, 0, 10));
+    // floor.static = true;
+    // floor.collidedFunc = (body) => {};
+
+    circles.push(physics.registerBody(bodyTypes.createCircleBody(200, 200, 30, 10)));
 }
 
 // Runtime
 function draw(){
     background(220);
-    floor.render();
+    world.render();
+    // floor.render();
 
     for(let c of circles){
         c.render();
+
+        c.acc.x = (mouseX - c.pos.x) * 0.001;
+        c.acc.y = (mouseY - c.pos.y) * 0.001;
     }
 
-    physWorld.update(1);
+    physics.update(1);
 }

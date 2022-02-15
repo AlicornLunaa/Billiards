@@ -74,7 +74,7 @@ class Manifold {
     solve(){
         if(this.normal.x == 0 && this.normal.y == 0) return;
         if(this.body1.isTrigger || this.body2.isTrigger) return;
-        
+
         this.positionCorrection();
         this.impulseCorrection();
     }

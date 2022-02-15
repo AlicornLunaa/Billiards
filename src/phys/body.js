@@ -73,7 +73,7 @@ class Body {
      * @param {Body} body 
      * @returns {Manifold}
      */
-     intersects(body){
+    intersects(body){
         // Variables
         let manifold = new Manifold(false, createVector(0, 0), 0, createVector(0, 0), this, body);
 
@@ -223,6 +223,17 @@ let bodyTypes = {
     createCircleBody(x, y, radius, mass){
         let b = new Body(x, y, 0, mass);
         b.addCollider(colliderTypes.createCircleCollider(0, 0, radius));
+
+        return b;
+    },
+    createWorldBody(x, y, width, height, rotation){
+        let b = new Body(x, y, rotation, 10);
+        b.static = true;
+
+        b.addCollider(colliderTypes.createBoxCollider(0, height, width + 200, 50, 0));
+        b.addCollider(colliderTypes.createBoxCollider(0, -height, width + 200, 50, 0));
+        b.addCollider(colliderTypes.createBoxCollider(width, 0, 50, height + 200, 0));
+        b.addCollider(colliderTypes.createBoxCollider(-width, 0, 50, height + 200, 0));
 
         return b;
     }
