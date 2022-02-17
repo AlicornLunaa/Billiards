@@ -77,11 +77,6 @@ class Body {
         // Variables
         let manifolds = [];
 
-        let minimumOverlap = Infinity;
-        let minimumTranslation = createVector(0, 0);
-        let maximumOverlap = -Infinity;
-        let maximumContact = createVector(0, 0);
-
         // Check every collider against each other
         for(let colliderID1 = 0; colliderID1 < this.colliders.length; colliderID1++){
             let c1 = this.colliders[colliderID1];
@@ -89,6 +84,11 @@ class Body {
             for(let colliderID2 = 0; colliderID2 < body.colliders.length; colliderID2++){
                 let c2 = body.colliders[colliderID2];
                 let collision = true;
+
+                let minimumOverlap = Infinity;
+                let minimumTranslation = createVector(0, 0);
+                let maximumOverlap = -Infinity;
+                let maximumContact = createVector(0, 0);
                 
                 // Circle to circle collisions
                 if(c1 instanceof CircleCollider && c2 instanceof CircleCollider){
