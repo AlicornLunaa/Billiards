@@ -5,7 +5,7 @@
  * and count the ball as a score.
  */
 class Goal {
-    constructor(){
+    constructor(x, y, radius, scoredFunc){
         
     }
 }

@@ -1,6 +1,7 @@
 // Variables
 let physics;
 let world;
+let goals = [];
 let circles = [];
 let cueBall;
 
@@ -17,7 +18,6 @@ function setupTable(x, y){
                 
                 c.rb.pos.x = x + (col - row / 2) * spacing;
                 c.rb.pos.y = y - row * spacing;
-                console.log(index + "\tRow: " + row + "\tCol: " + col + "\t" + c.rb.pos);
 
                 index++;
                 if(index >= circles.length) return;
@@ -35,6 +35,10 @@ function setup(){
     physics = new World();
 
     world = physics.registerBody(bodyTypes.createWorldBody(width / 2, height / 2, 150, 220, 0));
+    world.addCollider(colliderTypes.createBoxCollider(0, 185, 180, 20, 0));
+    world.addCollider(colliderTypes.createBoxCollider(0, -185, 180, 20, 0));
+    world.addCollider(colliderTypes.createBoxCollider(-115, 0, 20, 315, 0));
+    world.addCollider(colliderTypes.createBoxCollider(115, 0, 20, 315, 0));
 
     // floor = physics.registerBody(bodyTypes.createBoxBody(200, 375, 390, 10, 0, 10));
     // floor.static = true;

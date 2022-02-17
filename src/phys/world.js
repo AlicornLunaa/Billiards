@@ -52,8 +52,8 @@ class World {
 
                 // Call the callback for the bodies
                 if(manifolds1.length > 0 && manifolds2.length > 0){
-                    b1.collidedFunc(b2);
-                    b2.collidedFunc(b1);
+                    b1.collidedFunc([b1, b2]);
+                    b2.collidedFunc([b2, b1]);
 
                     // Add manifold with smaller minimum translation vector
                     for(let manifold1 of manifolds1) for(let manifold2 of manifolds2){

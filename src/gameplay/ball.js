@@ -15,7 +15,7 @@ class Ball {
 
         fill(this.color);
         circle(0, 0, this.rb.colliders[0].radius * 2);
-        fill("black");
+        fill((brightness(this.color) < 85 || this.color == "blue") ? "white" : "black");
         textAlign(CENTER);
         textSize(10);
         text(this.number, -0.5, 4);
