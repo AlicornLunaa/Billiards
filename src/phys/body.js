@@ -24,11 +24,12 @@ class Body {
         this.inertia = 100;
         this.static = false; // Controls whether or not the object can be moved with collisions
         this.isTrigger = false; // Whether or not the object is solid, useful for triggers
+        this.collidable = true; // Whether or not collisions are detected at all
         this.id = -1; // ID to track within the physics world.
 
         this.colliders = []; // An array containing colliders for the body to hit
 
-        this.collidedFunc = (otherBody) => {}; // Collision callback
+        this.collidedFunc = (self, other) => {}; // Collision callback
     }
 
     /**

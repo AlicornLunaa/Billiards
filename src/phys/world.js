@@ -46,14 +46,18 @@ class World {
                 let b1 = this.bodies[i];
                 let b2 = this.bodies[k];
                 
+                // Check flags
+                if(!b1.collidable) break;
+                if(!b2.collidable) continue;
+                
                 // Check each body
                 let manifolds1 = b1.intersects(b2);
                 let manifolds2 = b2.intersects(b1);
 
                 // Call the callback for the bodies
                 if(manifolds1.length > 0 && manifolds2.length > 0){
-                    b1.collidedFunc([b1, b2]);
-                    b2.collidedFunc([b2, b1]);
+                    b1.collidedFunc(b1, b2);
+                    b2.collidedFunc(b2, b1);
 
                     // Add manifold with smaller minimum translation vector
                     for(let manifold1 of manifolds1) for(let manifold2 of manifolds2){
