@@ -16,7 +16,8 @@ function setup(){
     // floor.static = true;
     // floor.collidedFunc = (body) => {};
 
-    circles.push(physics.registerBody(bodyTypes.createCircleBody(200, 200, 30, 10)));
+    circles.push(physics.registerBody(bodyTypes.createCircleBody(160, 203, 30, 10)));
+    circles.push(physics.registerBody(bodyTypes.createCircleBody(280, 200, 30, 10)));
 }
 
 // Runtime
@@ -27,9 +28,6 @@ function draw(){
 
     for(let c of circles){
         c.render();
-
-        c.acc.x = (mouseX - c.pos.x) * 0.001;
-        c.acc.y = (mouseY - c.pos.y) * 0.001;
     }
 
     physics.update(1);

@@ -55,16 +55,14 @@ class World {
                     b1.collidedFunc(b2);
                     b2.collidedFunc(b1);
 
-                    this.collisions = this.collisions.concat(manifolds1);
-                    this.collisions = this.collisions.concat(manifolds2);
                     // Add manifold with smaller minimum translation vector
-                    // for(let manifold1 of manifolds1) for(let manifold2 of manifolds2){
-                    //     if(manifold1.intersection < manifold2.intersection){
-                    //         this.collisions.push(manifold1);
-                    //     } else {
-                    //         this.collisions.push(manifold2);
-                    //     }
-                    // }
+                    for(let manifold1 of manifolds1) for(let manifold2 of manifolds2){
+                        if(manifold1.intersection < manifold2.intersection){
+                            this.collisions.push(manifold1);
+                        } else {
+                            this.collisions.push(manifold2);
+                        }
+                    }
                 }
             }
         }

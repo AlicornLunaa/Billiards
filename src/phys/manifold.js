@@ -42,7 +42,7 @@ class Manifold {
 
         // Impulse resolution equation
         let numerator = this.normal.dot(p5.Vector.mult(relativeVelocity, -(1 + restitution)));
-        let denomator = (invMass1 + invMass2) * 4 /*+ this.normal.dot(p5.Vector.add(angEnergy1, angEnergy2))*/;
+        let denomator = (invMass1 + invMass2)/* + this.normal.dot(p5.Vector.add(angEnergy1, angEnergy2))*/;
 
         return numerator / denomator;
     }
@@ -59,12 +59,12 @@ class Manifold {
         
         if(!this.body1.static){
             this.body1.vel.sub(p5.Vector.mult(this.normal, impulse / this.body1.mass));
-            this.body1.angVel -= impulse * (1 / this.body1.inertia) * contact1.cross(this.normal).z;
+            // this.body1.angVel -= impulse * (1 / this.body1.inertia) * contact1.cross(this.normal).z;
         }
 
         if(!this.body2.static){
             this.body2.vel.add(p5.Vector.mult(this.normal, impulse / this.body2.mass));
-            this.body2.angVel += impulse * (1 / this.body2.inertia) * contact2.cross(this.normal).z;
+            // this.body2.angVel += impulse * (1 / this.body2.inertia) * contact2.cross(this.normal).z;
         }
     }
 

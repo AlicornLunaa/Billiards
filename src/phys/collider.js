@@ -114,8 +114,8 @@ class CircleCollider extends Collider {
      */
     render(){
         translate(this.pos.x, this.pos.y);
-        circle(0, 0, 1);
         circle(0, 0, this.radius * 2);
+        circle(0, 0, 1);
     }
 };
 

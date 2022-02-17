@@ -20,8 +20,8 @@ class Body {
         this.angVel = 0; // The float containing the rotational velocity
         this.torque = 0;
         this.mass = mass;
-        this.elasticity = 10;
-        this.inertia = 1000;
+        this.elasticity = 1;
+        this.inertia = 100;
         this.static = false; // Controls whether or not the object can be moved with collisions
         this.isTrigger = false; // Whether or not the object is solid, useful for triggers
         this.id = -1; // ID to track within the physics world.
@@ -93,14 +93,14 @@ class Body {
                 // Circle to circle collisions
                 if(c1 instanceof CircleCollider && c2 instanceof CircleCollider){
                     // Get distance
-                    let relative = p5.Vector.sub(body.getPoint(colliderID2, 0), this.getPoint(colliderID1, 0));
+                    let relative = p5.Vector.sub(this.getPoint(colliderID1, 0), body.getPoint(colliderID2, 0));
                     let distance = relative.magSq();
                     let manifold = new Manifold(false, createVector(0, 0), 0, createVector(0, 0), this, body);
                     
                     if(distance < (c1.radius + c2.radius) * (c1.radius + c2.radius)){
                         manifold.collides = true;
-                        manifold.normal = p5.Vector.mult(p5.Vector.normalize(relative), -1);
-                        manifold.intersection = c1.radius + c2.radius - sqrt(distance);
+                        manifold.normal = p5.Vector.normalize(relative);
+                        manifold.intersection = (relative.mag() - (c1.radius + c2.radius)) * -1;
                         manifold.contactPoint = p5.Vector.mult(p5.Vector.add(body.getPoint(colliderID2, 0), this.getPoint(colliderID1, 0)), 0.5);
                     }
 
@@ -122,7 +122,7 @@ class Body {
                     
                     // Loop through every vertex of this polygon and get its projection
                     if(c1 instanceof CircleCollider){
-                        // Circle collision on C1 are always true
+                        // Circle collision on C1 should bypass
                         return [new Manifold(true, createVector(0, 0), Infinity, createVector(0, 0), this, body)];
                     } else {
                         // Polygon collisions
@@ -223,7 +223,7 @@ let bodyTypes = {
         return b;
     },
     createWorldBody(x, y, width, height, rotation){
-        let b = new Body(x, y, rotation, 10);
+        let b = new Body(x, y, rotation, Infinity);
         b.static = true;
 
         b.addCollider(colliderTypes.createBoxCollider(0, height, width + 200, 50, 0));
