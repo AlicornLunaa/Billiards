@@ -3,43 +3,70 @@ let physics;
 let world;
 let goals = [];
 let circles = [];
+let potted = []; // List of the bodies that were scored
 let cueBall;
 let grabPos;
+let gameState = {
+    over: false,
+    won: false
+};
 
 // Functions
 function setupTable(x, y){
     let index = 0;
     let rowSize = 1;
     let spacing = 14;
+    let exit = false;
 
-    while(index < circles.length){
-        for(let row = 0; row < rowSize; row++){
-            for(let col = 0; col < row + 1; col++){
+    while(!exit){
+        for(let row = 0; row < rowSize && !exit; row++){
+            for(let col = 0; col < row + 1 && !exit; col++){
                 let c = circles[index];
                 
                 c.rb.pos.x = x + (col - row / 2) * spacing;
                 c.rb.pos.y = y - row * spacing;
 
                 index++;
-                if(index >= circles.length) return;
+                exit = index >= circles.length;
             }
 
             rowSize++;
         }
     }
+
+    // Swap 5 and 8 so that 8 is in the middle
+    let temp = circles[4].rb.pos;
+    circles[4].rb.pos = circles[7].rb.pos;
+    circles[7].rb.pos = temp;
 }
 
 function goalScored(self, other){
-    other.collidable = false;
-    other.vel.mult(0);
-    other.pos.x = 10;
-    other.pos.y = 10;
-    
+    // Save collision
+    potted.push({
+        goal: self,
+        ball: other
+    });
+
     if(other.id === cueBall.rb.id){
-        cueBall.rb.collidable = true;
-        cueBall.rb.pos.x = width / 2;
-        cueBall.rb.pos.y = height - height / 4;
+        // Cue ball was potted, end game
+        gameState.over = true;
+        gameState.won = false;
+    } else if(other.id === circles[7].rb.id){
+        // 8 ball was potted, check if everything else was potted first
+        if(potted.length >= 14){
+            gameState.won = true;
+        }
+
+        gameState.over = true;
+    } else {
+        // Regular ball was potted
+        other.collidable = false;
+        other.vel.mult(0);
     }
+}
+
+function displayEnding(){
+    
 }
 
 // Initializer
@@ -59,10 +86,10 @@ function setup(){
 
     // Create goal areas
     goals.push(physics.registerBody(bodyTypes.createBoxBody(92, 25, 25, 30, 0, Infinity)));
-    goals.push(physics.registerBody(bodyTypes.createBoxBody(85.5, height / 2, 20, 30, 0, Infinity)));
+    goals.push(physics.registerBody(bodyTypes.createBoxBody(85.5, height / 2, 10, 20, 0, Infinity)));
     goals.push(physics.registerBody(bodyTypes.createBoxBody(92, height - 25, 25, 30, 0, Infinity)));
     goals.push(physics.registerBody(bodyTypes.createBoxBody(width - 92, 25, 25, 30, 0, Infinity)));
-    goals.push(physics.registerBody(bodyTypes.createBoxBody(width - 85.5, height / 2, 20, 30, 0, Infinity)));
+    goals.push(physics.registerBody(bodyTypes.createBoxBody(width - 85.5, height / 2, 10, 20, 0, Infinity)));
     goals.push(physics.registerBody(bodyTypes.createBoxBody(width - 92, height - 25, 25, 30, 0, Infinity)));
 
     for(let g of goals){
@@ -102,18 +129,24 @@ function draw(){
 
     for(let c of circles){
         // Slow down the circles a little every frame
-        c.rb.vel.mult(0.99);
+        c.rb.vel.mult(0.97);
 
         // Render the circles
         c.render();
     }
-    cueBall.rb.vel.mult(0.99);
+    cueBall.rb.vel.mult(0.97);
     cueBall.render();
 
     for(let g of goals){ g.render(); }
 
+    if(gameState.over){ displayEnding(); }
+
     // Logic
-    if(grabPos != undefined){
+    for(let pot of potted){
+        pot.ball.vel = p5.Vector.mult(p5.Vector.sub(pot.goal.pos, pot.ball.pos), 0.1);
+    }
+
+    if(grabPos != undefined && !gameState.over){
         grabPos.x = mouseX;
         grabPos.y = mouseY;
 
@@ -124,11 +157,15 @@ function draw(){
 
 function mousePressed(){
     // Start pulling back to show velocity line
+    if(gameState.over) return;
+
     grabPos = createVector(mouseX, mouseY);
 }
 
 function mouseReleased(){
     // Apply the forces
+    if(gameState.over) return;
+    
     cueBall.rb.acc.add(p5.Vector.mult(p5.Vector.sub(grabPos, cueBall.rb.pos), -0.075));
     grabPos = undefined;
 }
