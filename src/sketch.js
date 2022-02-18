@@ -8,7 +8,9 @@ let cueBall;
 let grabPos;
 let gameState = {
     over: false,
-    won: false
+    won: false,
+    nextMove: true,
+    debug: true
 };
 
 // Functions
@@ -38,10 +40,23 @@ function setupTable(x, y){
     let temp = circles[4].rb.pos;
     circles[4].rb.pos = circles[7].rb.pos;
     circles[7].rb.pos = temp;
+
+    // Set cue ball position
+    circles[15].rb.pos.x = width / 2;
+    circles[15].rb.pos.y = height - height / 4;
 }
 
 function goalScored(self, other){
-    // Save collision
+    // Save collision if it doesnt exist
+    let exists = false;
+    for(let pot of potted){
+        if(pot.ball.id === other.id){
+            exists = true;
+            break;
+        }
+    }
+    if(exists) return;
+
     potted.push({
         goal: self,
         ball: other
@@ -85,12 +100,12 @@ function setup(){
     world.addCollider(colliderTypes.createBoxCollider(115, -85, 20, 135, 0));
 
     // Create goal areas
-    goals.push(physics.registerBody(bodyTypes.createBoxBody(92, 25, 25, 30, 0, Infinity)));
+    goals.push(physics.registerBody(bodyTypes.createBoxBody(90, 24, 20, 25, 0, Infinity)));
     goals.push(physics.registerBody(bodyTypes.createBoxBody(85.5, height / 2, 10, 20, 0, Infinity)));
-    goals.push(physics.registerBody(bodyTypes.createBoxBody(92, height - 25, 25, 30, 0, Infinity)));
-    goals.push(physics.registerBody(bodyTypes.createBoxBody(width - 92, 25, 25, 30, 0, Infinity)));
+    goals.push(physics.registerBody(bodyTypes.createBoxBody(90, height - 24, 20, 25, 0, Infinity)));
+    goals.push(physics.registerBody(bodyTypes.createBoxBody(width - 90, 24, 20, 25, 0, Infinity)));
     goals.push(physics.registerBody(bodyTypes.createBoxBody(width - 85.5, height / 2, 10, 20, 0, Infinity)));
-    goals.push(physics.registerBody(bodyTypes.createBoxBody(width - 92, height - 25, 25, 30, 0, Infinity)));
+    goals.push(physics.registerBody(bodyTypes.createBoxBody(width - 90, height - 24, 20, 25, 0, Infinity)));
 
     for(let g of goals){
         g.isTrigger = true;
@@ -114,7 +129,8 @@ function setup(){
     circles.push(new Ball(physics, 200, 200, "orange", 13));
     circles.push(new Ball(physics, 200, 200, "green", 14));
     circles.push(new Ball(physics, 200, 200, "burgundy", 15));
-    cueBall = new Ball(physics, 200, 300, "white", " ");
+    circles.push(new Ball(physics, 200, 300, "white", " "));
+    cueBall = circles[15];
     setupTable(200, 200);
 }
 
@@ -125,19 +141,26 @@ function draw(){
 
     // Rendering
     background(220);
-    world.render();
 
+    gameState.nextMove = true;
     for(let c of circles){
         // Slow down the circles a little every frame
-        c.rb.vel.mult(0.97);
+        c.rb.vel.mult(0.98);
+
+        // Dont allow another shot until everything slows down
+        if(c.rb.vel.magSq() > 0.045) gameState.nextMove = false;
 
         // Render the circles
         c.render();
     }
-    cueBall.rb.vel.mult(0.97);
-    cueBall.render();
 
-    for(let g of goals){ g.render(); }
+    if(gameState.debug){
+        world.render();
+
+        for(let g of goals){
+            g.render();
+        }
+    }
 
     if(gameState.over){ displayEnding(); }
 
@@ -146,7 +169,7 @@ function draw(){
         pot.ball.vel = p5.Vector.mult(p5.Vector.sub(pot.goal.pos, pot.ball.pos), 0.1);
     }
 
-    if(grabPos != undefined && !gameState.over){
+    if(grabPos != undefined && !gameState.over && gameState.nextMove){
         grabPos.x = mouseX;
         grabPos.y = mouseY;
 
@@ -157,14 +180,17 @@ function draw(){
 
 function mousePressed(){
     // Start pulling back to show velocity line
-    if(gameState.over) return;
+    if(gameState.over || !gameState.nextMove){
+        grabPos = undefined;
+        return;
+    }
 
     grabPos = createVector(mouseX, mouseY);
 }
 
 function mouseReleased(){
     // Apply the forces
-    if(gameState.over) return;
+    if(gameState.over || !gameState.nextMove || grabPos == undefined) return;
     
     cueBall.rb.acc.add(p5.Vector.mult(p5.Vector.sub(grabPos, cueBall.rb.pos), -0.075));
     grabPos = undefined;
