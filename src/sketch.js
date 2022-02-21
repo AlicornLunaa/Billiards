@@ -5,6 +5,7 @@ let goals = [];
 let circles = [];
 let potted = []; // List of the bodies that were scored
 let cueBall;
+let maxCueLength = 150;
 let grabPos;
 let gameState = {
     over: false,
@@ -213,6 +214,13 @@ function draw(){
         grabPos.x = mouseX;
         grabPos.y = mouseY;
 
+        // Cap distance
+        if(p5.Vector.sub(cueBall.rb.pos, grabPos).mag() > maxCueLength){
+            grabPos = p5.Vector.mult(p5.Vector.normalize(p5.Vector.sub(cueBall.rb.pos, grabPos)), -maxCueLength);
+            grabPos.add(cueBall.rb.pos);
+        }
+
+        
         resetMatrix();
         line(cueBall.rb.pos.x, cueBall.rb.pos.y, grabPos.x, grabPos.y);
     }
