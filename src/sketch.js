@@ -10,7 +10,7 @@ let gameState = {
     over: false,
     won: false,
     nextMove: true,
-    debug: true
+    debug: false
 };
 
 // Functions
@@ -80,14 +80,53 @@ function goalScored(self, other){
     }
 }
 
+function drawBackground(){
+    resetMatrix();
+    background(200);
+
+    // Exterior border
+    rectMode(CENTER);
+    fill(54, 19, 0);
+    rect(width / 2, height / 2, 270, 410);
+
+    // Interior green
+    fill(5, 102, 15);
+    rect(width / 2, height / 2, 210, 350);
+
+    // Holes
+    fill(2, 38, 5);
+    rect(95, 28, 24, 24, 10, 10, 10, 10); // Top left
+    rect(85, height / 2, 20, 24, 10, 0, 0, 10); // Mid left
+    rect(95, height - 28, 24, 24, 10, 10, 10, 10); // Bottom left
+    rect(width - 95, 28, 24, 24, 10, 10, 10, 10); // Top right
+    rect(width - 85, height / 2, 20, 24, 0, 10, 10, 0); // Mid right
+    rect(width - 95, height - 28, 24, 24, 10, 10, 10, 10); // Bottom right
+
+    // Reset
+    fill(255);
+}
+
 function displayEnding(){
-    
+    resetMatrix();
+    fill(255);
+    stroke(0);
+    strokeWeight(2);
+    textAlign(CENTER);
+    text("Game over!", width / 2, height / 2);
+
+    if(gameState.won){
+        text("You won!", width / 2, height / 2 + 20);
+    } else {
+        text("You lost!", width / 2, height / 2 + 20);
+    }
+
+    strokeWeight(0.4);
 }
 
 // Initializer
 function setup(){
     // Initialize window
-    createCanvas(400, 400);
+    createCanvas(400, 405);
     physics = new World();
 
     // Setup table collisions
@@ -141,6 +180,7 @@ function draw(){
 
     // Rendering
     background(220);
+    drawBackground();
 
     gameState.nextMove = true;
     for(let c of circles){
