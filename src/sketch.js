@@ -2,6 +2,7 @@
 let physics;
 let world;
 let goals = [];
+let obstacles = [];
 let circles = [];
 let potted = []; // List of the bodies that were scored
 let cueBall;
@@ -11,6 +12,7 @@ let gameState = {
     over: false,
     won: false,
     nextMove: true,
+    obstacles: 3,
     debug: false
 };
 
@@ -153,6 +155,11 @@ function setup(){
         g.collidedFunc = goalScored;
     }
 
+    // Create random obstacles
+    for(let i = 0; i < gameState.obstacles; i++){
+        obstacles.push(new Obstacle(physics, random(150, 250), random(75, 350), random(10, 30), random(3, 7)));
+    }
+
     // Ugly but must be done, the standard colors are arbitrary.
     circles.push(new Ball(physics, 200, 200, "yellow", 1));
     circles.push(new Ball(physics, 200, 200, "blue", 2));
@@ -201,6 +208,10 @@ function draw(){
         for(let g of goals){
             g.render();
         }
+    }
+
+    for(let o of obstacles){
+        o.render();
     }
 
     if(gameState.over){ displayEnding(); }
