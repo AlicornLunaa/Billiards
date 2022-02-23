@@ -9,6 +9,7 @@ let cueBall;
 let maxCueLength = 150;
 let grabPos;
 let gameState = {
+    started: false,
     over: false,
     won: false,
     nextMove: true,
@@ -216,6 +217,14 @@ function draw(){
 
     if(gameState.over){ displayEnding(); }
 
+    if(!gameState.started){
+        resetMatrix();
+        textAlign(CENTER);
+        textSize(12);
+        fill(255);
+        text("Click and drag anywhere to begin", width / 2, height / 8);
+    }
+
     // Logic
     for(let pot of potted){
         pot.ball.vel = p5.Vector.mult(p5.Vector.sub(pot.goal.pos, pot.ball.pos), 0.1);
@@ -239,6 +248,8 @@ function draw(){
 
 function mousePressed(){
     // Start pulling back to show velocity line
+    gameState.started = true;
+
     if(gameState.over || !gameState.nextMove){
         grabPos = undefined;
         return;
